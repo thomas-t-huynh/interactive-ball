@@ -136,6 +136,7 @@ var fadeOutRate = .03;
 // initial velocity
 var dx = 2;
 var dy = -2;
+var clickEnergy = 3;
 var energy = 1;
 function drawClickBubble(e) {
   if (e) {
@@ -192,24 +193,25 @@ function clickBall() {
     angle = Math.abs(angle);
     if (angle < half) {
       var percent = angle / half;
-      dx = -(2 * (1 - percent));
-      dy = 2 * percent;
+      dx = -(clickEnergy * (1 - percent));
+      dy = clickEnergy * percent;
     } else {
       var _percent = (angle - half) / half;
-      dx = 2 * _percent;
-      dy = 2 * _percent;
+      dx = clickEnergy * _percent;
+      dy = clickEnergy * (1 - _percent);
     }
   } else {
     if (angle < half) {
       var _percent2 = angle / half;
-      dx = -(2 * (1 - _percent2));
-      dy = -(2 * _percent2);
+      dx = -(clickEnergy * (1 - _percent2));
+      dy = -(clickEnergy * _percent2);
     } else {
       var _percent3 = (angle - half) / half;
-      dx = 2 * _percent3;
-      dy = -(2 * _percent3);
+      dx = clickEnergy * _percent3;
+      dy = -(clickEnergy * (1 - _percent3));
     }
   }
+  // console.log({ dx, dy})
   energy = 1;
 }
 function animate() {
