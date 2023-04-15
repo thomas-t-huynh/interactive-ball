@@ -1,3 +1,6 @@
+
+// TODO - create classes for each drawn object.
+
 const canvas = document.getElementById("mainCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -67,37 +70,33 @@ function clickBall() {
   const clickToCircleX = clickX - x;
   const clickToCircleY = clickY - y;
   const distance = Math.sqrt(clickToCircleX * clickToCircleX + clickToCircleY * clickToCircleY); // sqrt(x1 * x2 + y1 * y2) - distance formula
+  // - angle is north hemi, + angle is south hemi.
+  let angle = Math.atan2(clickToCircleY, clickToCircleX);
   if (distance > ballRadius) {
     return;
   }
-  // calculate the angle between the click position and the circle center
-  const angle = Math.atan2(clickToCircleY, clickToCircleX);
-
-  console.log({ angle, pi: Math.PI })
-
-  // move the circle depending on where the user clicks it
-  if (angle < -Math.PI / 4 && angle >= -3 * Math.PI / 4) {
-    // x += distance * Math.cos(Math.PI / 4 + angle);
-    // y -= distance * Math.sin(Math.PI / 4 + angle);
-    dx = Math.abs(dx)
-    dy = -Math.abs(dy)
-    console.log('bottom-left')
-  } else if (angle >= -Math.PI / 4 && angle < Math.PI / 4) {
-    // x += distance;
-    dx = -Math.abs(dx)
-    dy = -Math.abs(dx)
-    console.log('bottom-right')
-  } else if (angle >= Math.PI / 4 && angle < 3 * Math.PI / 4) {
-    // x += distance * Math.cos(Math.PI / 4 - angle);
-    // y += distance * Math.sin(Math.PI / 4 - angle);
-    dy = Math.abs(dy);
-    dx = Math.abs(dx)
-    console.log('bottom')
+  const half = Math.PI / 2;
+  if (angle < 0) {
+    angle = Math.abs(angle);
+    if (angle < half) {
+      const percent = angle / half;
+      dx = -(2 * (1 - percent));
+      dy = 2 * percent;
+    } else {
+      const percent = (angle - half) / half;
+      dx = (2 * percent);
+      dy = 2 * percent;
+    }
   } else {
-    // x -= distance;
-    console.log('bottom-left')
-    dx = Math.abs(dx)
-    dy = -Math.abs(dx)
+    if (angle < half) {
+      const percent = angle / half;
+      dx = -(2 * (1 - percent));
+      dy = -(2 * percent);
+    } else {
+      const percent = (angle - half) / half;
+      dx = 2 * percent;
+      dy = -(2 * percent);
+    }
   }
   energy = 1;
 }

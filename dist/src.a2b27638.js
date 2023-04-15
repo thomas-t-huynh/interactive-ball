@@ -118,6 +118,8 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   return newRequire;
 })({"src/index.js":[function(require,module,exports) {
+// TODO - create classes for each drawn object.
+
 var canvas = document.getElementById("mainCanvas");
 var ctx = canvas.getContext("2d");
 ctx.beginPath(); // start a new path
@@ -180,39 +182,33 @@ function clickBall() {
   var clickToCircleX = clickX - x;
   var clickToCircleY = clickY - y;
   var distance = Math.sqrt(clickToCircleX * clickToCircleX + clickToCircleY * clickToCircleY); // sqrt(x1 * x2 + y1 * y2) - distance formula
+  // - angle is north hemi, + angle is south hemi.
+  var angle = Math.atan2(clickToCircleY, clickToCircleX);
   if (distance > ballRadius) {
     return;
   }
-  // calculate the angle between the click position and the circle center
-  var angle = Math.atan2(clickToCircleY, clickToCircleX);
-  console.log({
-    angle: angle,
-    pi: Math.PI
-  });
-
-  // move the circle depending on where the user clicks it
-  if (angle < -Math.PI / 4 && angle >= -3 * Math.PI / 4) {
-    // x += distance * Math.cos(Math.PI / 4 + angle);
-    // y -= distance * Math.sin(Math.PI / 4 + angle);
-    dx = Math.abs(dx);
-    dy = -Math.abs(dy);
-    console.log('bottom-left');
-  } else if (angle >= -Math.PI / 4 && angle < Math.PI / 4) {
-    // x += distance;
-    dx = -Math.abs(dx);
-    dy = -Math.abs(dx);
-    console.log('bottom-right');
-  } else if (angle >= Math.PI / 4 && angle < 3 * Math.PI / 4) {
-    // x += distance * Math.cos(Math.PI / 4 - angle);
-    // y += distance * Math.sin(Math.PI / 4 - angle);
-    dy = Math.abs(dy);
-    dx = Math.abs(dx);
-    console.log('bottom');
+  var half = Math.PI / 2;
+  if (angle < 0) {
+    angle = Math.abs(angle);
+    if (angle < half) {
+      var percent = angle / half;
+      dx = -(2 * (1 - percent));
+      dy = 2 * percent;
+    } else {
+      var _percent = (angle - half) / half;
+      dx = 2 * _percent;
+      dy = 2 * _percent;
+    }
   } else {
-    // x -= distance;
-    console.log('bottom-left');
-    dx = Math.abs(dx);
-    dy = -Math.abs(dx);
+    if (angle < half) {
+      var _percent2 = angle / half;
+      dx = -(2 * (1 - _percent2));
+      dy = -(2 * _percent2);
+    } else {
+      var _percent3 = (angle - half) / half;
+      dx = 2 * _percent3;
+      dy = -(2 * _percent3);
+    }
   }
   energy = 1;
 }
@@ -250,7 +246,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61420" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50441" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
