@@ -1,4 +1,3 @@
-// TODO - Fix issue where clicking inside of the ball causes it to go in the opposite direction.
 // TODO - Refactor. Create classes for each drawn object.
 
 const canvas = document.getElementById('mainCanvas');
@@ -8,8 +7,8 @@ ctx.beginPath(); // start a new path
 const ballRadius = 12;
 const clickBubbleRadius = 6;
 // set ball in middle;
-let x = 0 + ballRadius + 1;
-let y = 0+ ballRadius + 1;
+let x = canvas.width / 2;
+let y = canvas.height / 2;
 
 let clickX = -50;
 let clickY = -50;
@@ -59,35 +58,43 @@ function calculateMovement() {
   }
   x += dx * energy;
   y += dy * energy;
-  const outHorizontal = x <= 0 + ballRadius || x >= canvas.width - ballRadius
+  const outHorizontal = x <= 0 + ballRadius || x >= canvas.width - ballRadius;
   const outVertical = y <= 0 + ballRadius || y >= canvas.height - ballRadius;
   // flip direction if ball reaches edge of canvas
-    if (outHorizontal && !isOutOfBounds) {
-      dx = -dx;
-    }
-    if (outVertical && !isOutOfBounds) {
-      dy = -dy;
-    } 
-    if ((outHorizontal || outVertical) && !isOutOfBounds) {
-      isOutOfBounds = true;
-    } else {
-      isOutOfBounds = false;
-    }
+  if (outHorizontal && !isOutOfBounds) {
+    dx = -dx;
+  }
+  if (outVertical && !isOutOfBounds) {
+    dy = -dy;
+  }
+  if ((outHorizontal || outVertical) && !isOutOfBounds) {
+    isOutOfBounds = true;
+  } else {
+    isOutOfBounds = false;
+  }
 }
 
 function clickBall() {
-  // TODO - refine this to have less glitchy inner circle click. When clicked in circle, based off mouse click area only rather than area from circle click.
-  let clickToCircleX = clickX > x ? clickX - clickBubbleRadius - x : clickX + clickBubbleRadius - x;
-  let clickToCircleY = clickY > y ? clickY - clickBubbleRadius - y : clickY + clickBubbleRadius - y;
-
+  let clickToCircleX =
+    clickX + clickBubbleRadius > x
+      ? clickX - x
+      : clickX + clickBubbleRadius - x;
+  let clickToCircleY =
+    clickY + clickBubbleRadius > y
+      ? clickY - y
+      : clickY + clickBubbleRadius - y;
   const distance = Math.sqrt(
     clickToCircleX * clickToCircleX + clickToCircleY * clickToCircleY
-  ); // sqrt(x1 * x2 + y1 * y2) - distance formula
-  // - angle is north hemi, + angle is south hemi.
+  ); 
+  // sqrt(x1 * x2 + y1 * y2) - distance formula
+  // console.log({
+  //   clickToCircleX, clickToCircleY, distance
+  // })
   if (distance > ballRadius) {
     return;
   }
 
+  // - angle is north hemi, + angle is south hemi.
   let angle = Math.atan2(clickToCircleY, clickToCircleX);
   const half = Math.PI / 2;
   if (angle < 0) {
@@ -112,7 +119,6 @@ function clickBall() {
       dy = -(clickEnergy * (1 - percent));
     }
   }
-  // console.log({ dx, dy})
   energy = 1;
 }
 

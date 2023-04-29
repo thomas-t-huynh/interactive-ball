@@ -118,7 +118,6 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   return newRequire;
 })({"src/index.js":[function(require,module,exports) {
-// TODO - Fix issue where clicking inside of the ball causes it to go in the opposite direction.
 // TODO - Refactor. Create classes for each drawn object.
 
 var canvas = document.getElementById('mainCanvas');
@@ -127,8 +126,8 @@ ctx.beginPath(); // start a new path
 var ballRadius = 12;
 var clickBubbleRadius = 6;
 // set ball in middle;
-var x = 0 + ballRadius + 1;
-var y = 0 + ballRadius + 1;
+var x = canvas.width / 2;
+var y = canvas.height / 2;
 var clickX = -50;
 var clickY = -50;
 var clickAlpha = 1;
@@ -188,14 +187,18 @@ function calculateMovement() {
   }
 }
 function clickBall() {
-  // TODO - refine this to have less glitchy inner circle click. When clicked in circle, based off mouse click area only rather than area from circle click.
-  var clickToCircleX = clickX > x ? clickX - clickBubbleRadius - x : clickX + clickBubbleRadius - x;
-  var clickToCircleY = clickY > y ? clickY - clickBubbleRadius - y : clickY + clickBubbleRadius - y;
-  var distance = Math.sqrt(clickToCircleX * clickToCircleX + clickToCircleY * clickToCircleY); // sqrt(x1 * x2 + y1 * y2) - distance formula
-  // - angle is north hemi, + angle is south hemi.
+  var clickToCircleX = clickX + clickBubbleRadius > x ? clickX - x : clickX + clickBubbleRadius - x;
+  var clickToCircleY = clickY + clickBubbleRadius > y ? clickY - y : clickY + clickBubbleRadius - y;
+  var distance = Math.sqrt(clickToCircleX * clickToCircleX + clickToCircleY * clickToCircleY);
+  // sqrt(x1 * x2 + y1 * y2) - distance formula
+  // console.log({
+  //   clickToCircleX, clickToCircleY, distance
+  // })
   if (distance > ballRadius) {
     return;
   }
+
+  // - angle is north hemi, + angle is south hemi.
   var angle = Math.atan2(clickToCircleY, clickToCircleX);
   var half = Math.PI / 2;
   if (angle < 0) {
@@ -220,7 +223,6 @@ function clickBall() {
       dy = -(clickEnergy * (1 - _percent3));
     }
   }
-  // console.log({ dx, dy})
   energy = 1;
 }
 function animate() {
