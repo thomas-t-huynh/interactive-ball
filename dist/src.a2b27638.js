@@ -118,26 +118,28 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   return newRequire;
 })({"src/index.js":[function(require,module,exports) {
-// TODO - create classes for each drawn object.
+// TODO - Fix issue where clicking inside of the ball causes it to go in the opposite direction.
+// TODO - Refactor. Create classes for each drawn object.
 
-var canvas = document.getElementById("mainCanvas");
-var ctx = canvas.getContext("2d");
+var canvas = document.getElementById('mainCanvas');
+var ctx = canvas.getContext('2d');
 ctx.beginPath(); // start a new path
 var ballRadius = 12;
 var clickBubbleRadius = 6;
 // set ball in middle;
-var x = canvas.width / 2;
-var y = canvas.height / 2;
+var x = 0 + ballRadius + 1;
+var y = 0 + ballRadius + 1;
 var clickX = -50;
 var clickY = -50;
 var clickAlpha = 1;
-var fadeOutRate = .03;
+var fadeOutRate = 0.03;
 
 // initial velocity
-var dx = 2;
-var dy = -2;
-var clickEnergy = 3;
+var dx = 0;
+var dy = 0;
+var clickEnergy = 6;
 var energy = 1;
+var isOutOfBounds = false;
 function drawClickBubble(e) {
   if (e) {
     clickX = e.offsetX;
@@ -148,11 +150,11 @@ function drawClickBubble(e) {
   ctx.arc(clickX, clickY, clickBubbleRadius, 0, 2 * Math.PI);
   clickAlpha -= fadeOutRate;
   ctx.globalAlpha = clickAlpha >= 0 ? clickAlpha : 0;
-  ctx.fillStyle = "pink";
+  ctx.fillStyle = 'lightgreen';
   ctx.fill(); // fill the circle with the current fill color
   ctx.closePath();
 }
-canvas.addEventListener("click", function (e) {
+canvas.addEventListener('click', function (e) {
   drawClickBubble(e);
   clickBall();
 });
@@ -160,7 +162,7 @@ function drawBall() {
   ctx.beginPath();
   ctx.arc(x, y, ballRadius, 0, 2 * Math.PI); // draw a circle with center at (25, 25) and radius of 25 pixels
   ctx.globalAlpha = 1;
-  ctx.fillStyle = "red";
+  ctx.fillStyle = 'red';
   ctx.fill(); // fill the circle with the current fill color
   ctx.closePath();
 }
@@ -170,24 +172,31 @@ function calculateMovement() {
   }
   x += dx * energy;
   y += dy * energy;
-
+  var outHorizontal = x <= 0 + ballRadius || x >= canvas.width - ballRadius;
+  var outVertical = y <= 0 + ballRadius || y >= canvas.height - ballRadius;
   // flip direction if ball reaches edge of canvas
-  if (x < 0 + ballRadius || x > canvas.width - ballRadius) {
+  if (outHorizontal && !isOutOfBounds) {
     dx = -dx;
   }
-  if (y < 0 + ballRadius || y > canvas.height - ballRadius) {
+  if (outVertical && !isOutOfBounds) {
     dy = -dy;
+  }
+  if ((outHorizontal || outVertical) && !isOutOfBounds) {
+    isOutOfBounds = true;
+  } else {
+    isOutOfBounds = false;
   }
 }
 function clickBall() {
-  var clickToCircleX = clickX - x;
-  var clickToCircleY = clickY - y;
+  // TODO - refine this to have less glitchy inner circle click. When clicked in circle, based off mouse click area only rather than area from circle click.
+  var clickToCircleX = clickX > x ? clickX - clickBubbleRadius - x : clickX + clickBubbleRadius - x;
+  var clickToCircleY = clickY > y ? clickY - clickBubbleRadius - y : clickY + clickBubbleRadius - y;
   var distance = Math.sqrt(clickToCircleX * clickToCircleX + clickToCircleY * clickToCircleY); // sqrt(x1 * x2 + y1 * y2) - distance formula
   // - angle is north hemi, + angle is south hemi.
-  var angle = Math.atan2(clickToCircleY, clickToCircleX);
   if (distance > ballRadius) {
     return;
   }
+  var angle = Math.atan2(clickToCircleY, clickToCircleX);
   var half = Math.PI / 2;
   if (angle < 0) {
     angle = Math.abs(angle);
@@ -248,7 +257,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50441" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56133" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
