@@ -117,97 +117,9 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"src/Object/Ball.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Ball = void 0;
+})({"src/Object/ClickBubble.js":[function(require,module,exports) {
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
-var Ball = /*#__PURE__*/function () {
-  function Ball(_ref) {
-    var x = _ref.x,
-      y = _ref.y,
-      dx = _ref.dx,
-      dy = _ref.dy,
-      maxEnergy = _ref.maxEnergy,
-      radius = _ref.radius,
-      canvas = _ref.canvas,
-      fillStyle = _ref.fillStyle;
-    _classCallCheck(this, Ball);
-    _defineProperty(this, "outOfBounds", false);
-    this.x = x;
-    this.y = y;
-    this.dx = dx;
-    this.dy = dy;
-    this.energy = maxEnergy;
-    this.radius = radius;
-    this.canvas = canvas;
-    this.fillStyle = fillStyle;
-  }
-  _createClass(Ball, [{
-    key: "updateMovement",
-    value: function updateMovement(ball) {
-      var canvas = ball.canvas,
-        radius = ball.radius;
-      if (ball.energy > 0) {
-        ball.energy -= 0.01;
-      }
-      ball.x += ball.dx * ball.energy;
-      ball.y += ball.dy * ball.energy;
-      var outCanvasWidth = ball.x <= 0 + radius || ball.x >= canvas.width - radius;
-      var outCanvasHeight = ball.y <= 0 + radius || ball.y >= canvas.height - radius;
-      // flip direction if ball reaches edge of canvas
-      if (outCanvasWidth && !ball.outOfBounds) {
-        ball.dx = -ball.dx;
-      }
-      if (outCanvasHeight && !ball.outOfBounds) {
-        ball.dy = -ball.dy;
-      }
-      var isOutOfBounds = (outCanvasWidth || outCanvasHeight) && !ball.outOfBounds;
-      if (isOutOfBounds) {
-        ball.outOfBounds = true;
-      } else {
-        ball.outOfBounds = false;
-      }
-    }
-  }, {
-    key: "draw",
-    value: function draw() {
-      var canvas = this.canvas,
-        radius = this.radius,
-        fillStyle = this.fillStyle,
-        x = this.x,
-        y = this.y,
-        updateMovement = this.updateMovement;
-      var ctx = canvas.getContext('2d');
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, 2 * Math.PI);
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = fillStyle;
-      ctx.fill(); // fill the circle with the current fill color
-      ctx.closePath();
-      updateMovement(this);
-    }
-  }]);
-  return Ball;
-}();
-exports.Ball = Ball;
-},{}],"src/Object/ClickBubble.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ClickBubble = void 0;
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _readOnlyError(name) { throw new TypeError("\"" + name + "\" is read-only"); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
@@ -238,24 +150,23 @@ var ClickBubble = /*#__PURE__*/function () {
   _createClass(ClickBubble, [{
     key: "draw",
     value: function draw(mouseOnClickEvent) {
+      var offsetX = mouseOnClickEvent.offsetX,
+        offsetY = mouseOnClickEvent.offsetY;
       var fillStyle = this.fillStyle,
         alpha = this.alpha,
         fadeOutRate = this.fadeOutRate,
         radius = this.radius,
         y = this.y,
-        x = this.x,
-        canvas = this.canvas;
+        x = this.x;
       if (mouseOnClickEvent) {
-        var offsetX = mouseOnClickEvent.offsetX,
-          offsetY = mouseOnClickEvent.offsetY;
-        this.x = offsetX;
-        this.y = offsetY;
-        this.alpha = 1;
+        offsetX, _readOnlyError("x");
+        offsetY, _readOnlyError("y");
+        1, _readOnlyError("alpha");
       }
       var ctx = canvas.getContext('2d');
       ctx.beginPath();
       ctx.arc(x, y, radius, 0, 2 * Math.PI);
-      this.alpha -= fadeOutRate;
+      alpha - fadeOutRate, _readOnlyError("alpha");
       ctx.globalAlpha = alpha >= 0 ? alpha : 0;
       ctx.fillStyle = fillStyle;
       ctx.fill(); // fill the circle with the current fill color
@@ -304,46 +215,7 @@ var ClickBubble = /*#__PURE__*/function () {
   }]);
   return ClickBubble;
 }();
-exports.ClickBubble = ClickBubble;
-},{}],"src/index.js":[function(require,module,exports) {
-"use strict";
-
-var _Ball = require("./Object/Ball");
-var _ClickBubble = require("./Object/ClickBubble");
-// TODO - Refactor. Create classes for each drawn object.
-
-var canvas = document.getElementById('mainCanvas');
-var ctx = canvas.getContext('2d');
-var ball = new _Ball.Ball({
-  x: canvas.width / 2,
-  y: canvas.width / 2,
-  dx: 0,
-  dy: 0,
-  maxEnergy: 1,
-  radius: 12,
-  fillStyle: 'red',
-  canvas: canvas
-});
-var clickBubble = new _ClickBubble.ClickBubble({
-  canvas: canvas,
-  energy: 6,
-  fadeOutRate: 0.03,
-  fillStyle: 'lightgreen',
-  radius: 6
-});
-canvas.addEventListener('click', function (e) {
-  clickBubble.draw(e);
-  clickBubble.clickBall(ball);
-});
-function animate() {
-  // clear canvas
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ball.draw();
-  clickBubble.draw();
-  requestAnimationFrame(animate);
-}
-animate();
-},{"./Object/Ball":"src/Object/Ball.js","./Object/ClickBubble":"src/Object/ClickBubble.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -512,5 +384,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.js"], null)
-//# sourceMappingURL=/src.a2b27638.js.map
+},{}]},{},["node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/Object/ClickBubble.js"], null)
+//# sourceMappingURL=/ClickBubble.adb402fd.js.map
